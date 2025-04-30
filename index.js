@@ -24,6 +24,23 @@ fastify.post('/upload/avatar', async (req, reply) => {
 	return { path: `/uploads/avatars/${filename}` };
 })
 
+fastify.delete('/delete/avatar', async (req,reply) => {
+	const { path: avatarPath } = req.body;
+
+	if (!avatarPath || avatarPath.endsWith('default.png')) {
+		return reply.code(400).send({ error: 'Cannot delete default avatar' });
+	}
+
+	const fullPath = path.join(__dirname, avatarPath);
+	try {
+		await fs.promises.unlink(fullPath);
+		return reply.send({ message: 'Avatar deleted successfully.' });
+	} catch (err) {
+		fastify.log.error('Error deleting avatar', err);
+		return reply.code(500).send({ error: 'Failed to delete avatar' });
+	}
+});
+
 fastify.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
 	if (err) {
 		fastify.log.error(err);
