@@ -29,6 +29,8 @@ COPY --from=builder /app/index.js ./
 #COPY --from=builder /app/routes ./routes
 #COPY --from=builder /app/middleware ./middleware
 
+RUN mkdir -p /app/uploads && chown -R app:app /app/uploads
+
 USER app
 
 # 5) Basic healthcheck (adjust path as needed)
