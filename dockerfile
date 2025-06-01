@@ -29,9 +29,13 @@ COPY --from=builder /app/index.js ./
 #COPY --from=builder /app/routes ./routes
 #COPY --from=builder /app/middleware ./middleware
 
-RUN mkdir -p /app/uploads && chown -R app:app /app/uploads
+RUN mkdir -p /app/database
 
-USER app
+COPY uploads_perms.sh ./
+RUN chmod +x uploads_perms.sh
+
+USER root
+ENTRYPOINT ["./uploads_perms.sh"]
 
 # 5) Basic healthcheck (adjust path as needed)
 HEALTHCHECK --interval=10s --timeout=5s --start-period=5s \
